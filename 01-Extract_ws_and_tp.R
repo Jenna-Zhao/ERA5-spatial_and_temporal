@@ -15,8 +15,8 @@ calculate_wind_speed = function(u, v,
   if (!all(dim(u) == dim(v))) {
     stop("The dimensions of u and v must match")
   }
-  u = u * scale_u + offset_u
-  v = v * scale_v + offset_v
+  u = u #* scale_u + offset_u
+  v = v #* scale_v + offset_v
   wind_speed = sqrt(u^2 + v^2)
   return(wind_speed)
 }
@@ -83,5 +83,5 @@ for (name in nc_files) {
   extract_ws_tp(name)
 }
 
-
+extract_ws_tp(nc_name = "IAN_2022_10.nc")
 

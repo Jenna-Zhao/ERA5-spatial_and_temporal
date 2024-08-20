@@ -66,7 +66,7 @@ replace_na_below_threshold = function(ws, tp, quantile_value) {
         max_diff = max(diff(change_ind))
         diff_ind = which(diff(change_ind) == max_diff)
         
-        if (max_diff >= 5) {
+        if (max_diff >= 7) {
           for (k in diff_ind) {
             first_ind = series_ind[change_ind[k]]
             last_ind = first_ind + max_diff - 1
@@ -83,18 +83,20 @@ replace_na_below_threshold = function(ws, tp, quantile_value) {
 }
 
 # Function to process each storm
-process_storm = function(nc_name, base_time, quantile_value, two_month = FALSE) {
+process_storm = function(nc_name, quantile_value, two_month = FALSE) {
   if (two_month) {
-    storm_first_half = extract_variable(nc_name[1])
-    storm_second_half = extract_variable(nc_name[2])
+    storm_first_half = extract_variable(nc_name[1], two_month)
+    storm_second_half = extract_variable(nc_name[2], two_month)
     storm = list("time" = c(storm_first_half$time, storm_second_half$time),
                  "latitude" = storm_first_half$latitude,
                  "longitude" = storm_first_half$longitude,
                  "ws" = abind(storm_first_half$ws, storm_second_half$ws, along = 3),
                  "tp" = abind(storm_first_half$tp, storm_second_half$tp, along = 3))
   } else {
-    storm = extract_variable(nc_name = nc_name)
+    storm = extract_variable(nc_name = nc_name, two_month)
   }
+  
+  base_time = as.POSIXct("1900-01-01 00:00:00", tz = "UTC")
   
   storm_removed = replace_na_below_threshold(storm$ws, storm$tp, quantile_value)
   
