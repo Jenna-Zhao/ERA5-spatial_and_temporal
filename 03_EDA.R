@@ -1,6 +1,6 @@
 ### Load data ----
-Ian_first_half = extract_variable("IAN_2022_09.nc", two_month = TRUE)
-Ian_second_half = extract_variable("IAN_2022_10.nc", two_month = TRUE)
+Ian_first_half = extract_variable("newIAN_2022_09.nc", two_month = TRUE)
+Ian_second_half = extract_variable("newIAN_2022_10.nc", two_month = TRUE)
 Ian = list("time" = c(Ian_first_half$time, Ian_second_half$time),
              "latitude" = Ian_first_half$latitude,
              "longitude" = Ian_first_half$longitude,
