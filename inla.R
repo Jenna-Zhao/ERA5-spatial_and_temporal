@@ -1,5 +1,5 @@
 ### Read data ----
-Wilma = extract_variable("newWILMA_2005_10.nc")
+Wilma = extract_variable("WILMA_2005_10.nc")
 Wilma_2005 = replace_na_below_threshold(ws = Wilma$ws[, , 220:240], 
                                         tp = Wilma$tp[, , 220:240], 
                                         quantile_value = .80)
