@@ -125,11 +125,11 @@ alpha.max = 1
 shape_prior = list(prior = "loggamma",  
                    param = c(2, 0.01))
 K = 2
+u = 1
 model.indmcar = inla.INDMCAR.model(k = K, W = W, alpha.min = alpha.min,
                                    alpha.max = alpha.max)
 time.mcar = inla.MCAR.model(k = K, W = W_time, alpha.min = alpha.min,
                             alpha.max = alpha.max)
-u = 1
 INDPMCAR.time = inla(OBS ~ 0 + Intercept + 
                        f(spatial_idx, model = model.indmcar) +
                        f(time_idx, model = time.mcar) + 
@@ -138,11 +138,8 @@ INDPMCAR.time = inla(OBS ~ 0 + Intercept +
                      control.predictor = list(compute = TRUE),
                      control.compute = list(config = TRUE, dic = TRUE, waic = TRUE, cpo = TRUE))
 summary(INDPMCAR.time)
-
 indpmcar.pred.time = INDPMCAR.time$summary.fitted.values
 indpmcar.prop = sum(df_inla$OBS < indpmcar.pred.time$`0.025quant` | df_inla$OBS > indpmcar.pred.time$`0.975quant`) / length(df_inla$OBS)
-
-# 0.5015489
 
 INDPMCAR.rw = inla(OBS ~ 0 + Intercept + 
                      f(spatial_idx, model = model.indmcar) +
@@ -155,15 +152,12 @@ INDPMCAR.rw = inla(OBS ~ 0 + Intercept +
                      control.predictor = list(compute = TRUE),
                      control.compute = list(config = TRUE, dic = TRUE, waic = TRUE, cpo = TRUE))
 summary(INDPMCAR.time)
-
 indpmcar.pred.rw = INDPMCAR.rw$summary.fitted.values
 indpmcar.rw.prop = sum(df_inla$OBS < indpmcar.pred.rw$`0.025quant` | df_inla$OBS > indpmcar.pred.rw$`0.975quant`) / length(df_inla$OBS)
-# 0.4974655
 
 u = 1
 model.mcar = inla.MCAR.model(k = K, W = W, alpha.min = alpha.min,
                              alpha.max = alpha.max)
-
 PMCAR.time = inla(OBS ~ 0 + Intercept +
                     f(spatial_idx, model = model.mcar) +
                     f(time_idx, model = time.mcar) + 
@@ -173,14 +167,10 @@ PMCAR.time = inla(OBS ~ 0 + Intercept +
                   data = df_inla, family = "gamma", 
                   control.predictor = list(compute = TRUE),
                   control.compute = list(config = TRUE, dic = TRUE, waic = TRUE, cpo = TRUE))
-
 summary(PMCAR.time)
-
 pmcar.pred.time = PMCAR.time$summary.fitted.values
 pmcar.prop = sum(df_inla$OBS < pmcar.pred.time$`0.025quant` | df_inla$OBS > pmcar.pred.time$`0.975quant`) / length(df_inla$OBS)
 
-# 0.4670515
-# 0.2879471 c(runif(nrow(storm_data), 3, 5), runif(nrow(storm_data), 0.01, 0.1)),
 PMCAR.time = inla(OBS ~ 0 + Intercept +
                     f(spatial_idx, model = model.mcar) +
                     f(interaction, model = "iid") +
@@ -194,14 +184,9 @@ PMCAR.time = inla(OBS ~ 0 + Intercept +
                   data = df_inla, family = "gamma",  
                   control.predictor = list(compute = TRUE),
                   control.compute = list(config = TRUE, dic = TRUE, waic = TRUE, cpo = TRUE))
-
 summary(PMCAR.time)
-
 pmcar.pred.time = PMCAR.time$summary.fitted.values
 pmcar.prop = sum(df_inla$OBS < pmcar.pred.time$`0.025quant` | df_inla$OBS > pmcar.pred.time$`0.975quant`) / length(df_inla$OBS)
-# 0.4655027
-
-# 0.2572515
 
 ### mmmodel ------
 library(Matrix)
@@ -231,28 +216,4 @@ Mmodel.time = inla(OBS ~ 0 + Intercept +
                    # control.family = list(variant = 1),
                    control.predictor = list(compute = TRUE),
                    control.compute = list(config = TRUE, dic = TRUE, waic = TRUE, cpo = TRUE))
-
-
-
-indpmcar.pred.loc = INDPMCAR.loc$summary.fitted.values
-indpmcar.prop.loc = sum(df_loc$OBS < indpmcar.pred.loc$`0.025quant` | df_loc$OBS > indpmcar.pred.loc$`0.975quant`) / length(df_loc$OBS)
-
-n = nrow(df_inla)/2
-indpmcar.pred.time = INDPMCAR.time$summary.fitted.values
-indpmcar.prop = sum(df_inla$OBS < indpmcar.pred.time$`0.025quant` | df_inla$OBS > indpmcar.pred.time$`0.975quant`) / length(df_inla$OBS)
-# 0.5130532 (RW1)
-# 0.08739255
-
-# 0.5128133
-pmcar.pred.loc = PMCAR.loc$summary.fitted.values
-pmcar.prop.loc = sum(df_loc$OBS < pmcar.pred.loc$`0.025quant` | df_loc$OBS > pmcar.pred.loc$`0.975quant`) / length(df_loc$OBS)
-
-pmcar.pred.time = PMCAR.time$summary.fitted.values
-pmcar.prop = sum(df_inla$OBS < pmcar.pred.time$`0.025quant` | df_inla$OBS > pmcar.pred.time$`0.975quant`) / length(df_inla$OBS)
-# 0.4821713 (RW1)
-# 0.0935211
-
-# 0.4359335
-# 0.4184737
-sum(log(INDPMCAR.time$cpo$cpo), na.rm = TRUE)
 
